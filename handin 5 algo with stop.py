@@ -36,16 +36,15 @@ def constrained_newton(x0, A, f, df, hf, iterations=1000):
         p_k = solved[0:A.shape[1]]
 
         lam = solved[A.shape[1]:]
-        print('stop', np.linalg.norm(df(x_k) + A.T @ lam))
-        if np.linalg.norm(df(x_k)+A.T@lam) < 10**(-6): #stopping criteria
-            break
+        #print('stop', np.linalg.norm(df(x_k) + A.T @ lam))
 
         # Compute the step size
         alpha_k = back_track(x=x_k, p=p_k, f=f, df=df)
 
         # Update the current solution
         x_k = x_k + alpha_k * p_k
-
+        if np.linalg.norm(df(x_k)+A.T@lam) < 10**(-6): #stopping criteria
+            break
     return -x_k, i + 1
 
 m = 2
@@ -110,12 +109,12 @@ x0 = x - np.linalg.pinv(A) @ (A@x + b)
 x_newton,iterations_newton = constrained_newton(x0=np.array(x0),A=A,f=f3,df=df3,hf=Hf3)
 x_sd,iterations_sd = constrained_steepest_descent(f=f3,df=df3,x=np.array(x0),A=A)
 print(iterations_newton)
-#print("Newton's algorithm:\n iterations:",iterations_newton,"point found:",x_newton)
+print("Newton's algorithm:\n iterations:",iterations_newton,"point found:",x_newton)
 
-#print("Steepest descent algorithm:\n iterations:",iterations_sd,"point found:",x_sd)
+print("Steepest descent algorithm:\n iterations:",iterations_sd,"point found:",x_sd)
 
 
 linear_constraints = {"type": "eq", "fun": lambda x: A.dot(x) - b}
 
 opt = minimize(f3,x0=x0,constraints=linear_constraints)
-#print(opt.x)
+print(opt.x)
