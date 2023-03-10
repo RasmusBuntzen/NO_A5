@@ -66,7 +66,7 @@ def constrained_steepest_descent(f, df, x, A, max_iterations=10000, rho=0.5):
     x is staring point
     """
     beta = 1
-    M = np.identity(A.shape[1]) - A.T @ np.linalg.inv(A @ A.T) @ A
+    M = np.eye(A.shape[1]) - A.T @ (np.linalg.inv(A @ A.T)) @ A
     for i in range(0, max_iterations):
         pk = -M @ df(x)  # we set the ray direction
 
@@ -74,10 +74,10 @@ def constrained_steepest_descent(f, df, x, A, max_iterations=10000, rho=0.5):
 
         x = x + ak * pk  # we update x with the stepsize and direction
 
-        lam = np.linalg.norm(np.linalg.inv(A @ A.T) @ A @ df(x))  # we calculate lambda with the eq we found in theory
+        #lam = np.linalg.norm(np.linalg.inv(A @ A.T) @ A @ df(x))  # we calculate lambda with the eq we found in theory
 
         # print("stop",np.linalg.norm(df(x)+np.inner(A,lam)))
-        if np.linalg.norm(df(x) + np.inner(A, lam)) < 10 ** (-5):
+        if np.linalg.norm(M.dot(df(x))) < 10 ** (-5):
             break
 
         beta = ak / rho  # We calculate the new initial step size
